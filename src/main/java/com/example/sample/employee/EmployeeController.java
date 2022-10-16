@@ -1,17 +1,16 @@
 package com.example.sample.employee;
 
 import com.example.sample.ResponseEntity.Response;
-import com.example.sample.job.Job;
 import com.example.sample.job.JobRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDate;
+import java.util.List;
 
 import static java.time.LocalDateTime.now;
 import static java.util.Map.of;
-import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
@@ -24,23 +23,16 @@ public class EmployeeController {
     private final JobRepository jobRepository;
 
     @GetMapping("/listAll")
-    public ResponseEntity<Response> getEmployee(){
-        return ResponseEntity.ok(
-                Response.builder()
-                        .timestamp(now())
-                        .data(of("employees", employeeService.list(3)))
-                        .message("Employee Retrieved")
-                        .status(OK)
-                        .statusCode(OK.value())
-                        .build()
-        );
+    public List<Employee> getEmployee(){
+        employeeService.list(30);
+        return employeeRepository.findAll();
+
 
     }
-
     @PostMapping("/register/{id}")
-    public ResponseEntity<Employee> create(@RequestBody Employee employee, @PathVariable Long id){
+    public ResponseEntity<Object> create(@RequestBody Employee employee, @PathVariable Long id){
         employeeService.create(employee,id);
-        return ResponseEntity.ok(employee);
+        return ResponseEntity.ok("Successfully Registered");
     }
     @PutMapping("/update/{id}")
     public ResponseEntity<Response> updateEmployee(@PathVariable("id") Long id,
