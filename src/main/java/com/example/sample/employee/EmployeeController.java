@@ -20,6 +20,7 @@ import static org.springframework.http.HttpStatus.OK;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
+    private final EmployeeRepository employeeRepository;
     private final JobRepository jobRepository;
 
     @GetMapping("/listAll")
@@ -37,18 +38,9 @@ public class EmployeeController {
     }
 
     @PostMapping("/register/{id}")
-    public ResponseEntity<Response> registerEmployee(@RequestBody Employee employee,
-                                                     @PathVariable Long id){
-        return ResponseEntity.ok(
-                Response.builder()
-                        .timestamp(now())
-                        .data(of("employees", employeeService.create(employee, id)))
-                        .message("New Employee Registered")
-                        .status(CREATED)
-                        .statusCode(CREATED.value())
-                        .build()
-        );
-
+    public ResponseEntity<Employee> create(@RequestBody Employee employee, @PathVariable Long id){
+        employeeService.create(employee,id);
+        return ResponseEntity.ok(employee);
     }
     @PutMapping("/update/{id}")
     public ResponseEntity<Response> updateEmployee(@PathVariable("id") Long id,
