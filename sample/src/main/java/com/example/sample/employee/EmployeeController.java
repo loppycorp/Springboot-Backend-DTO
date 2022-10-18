@@ -1,18 +1,14 @@
 package com.example.sample.employee;
 
-import com.example.sample.ResponseEntity.Response;
-import com.example.sample.job.Job;
-import com.example.sample.job.JobRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 import static java.time.LocalDateTime.now;
 import static java.util.Map.of;
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,64 +16,42 @@ import static org.springframework.http.HttpStatus.OK;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
-    private final JobRepository jobRepository;
+    private final EmployeeRepository employeeRepository;
 
     @GetMapping("/listAll")
-    public ResponseEntity<Response> getEmployee(){
-        return ResponseEntity.ok(
-                Response.builder()
-                        .timestamp(now())
-                        .data(of("employees", employeeService.list(30)))
-                        .message("Employee Retrieved")
-                        .status(OK)
-                        .statusCode(OK.value())
-                        .build()
-        );
+    public List<Employee> getEmployee(){
+        employeeService.list(30);
+        return employeeRepository.findAll();
+
 
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<Response> registerEmployee(@RequestBody Employee employee){
-        return ResponseEntity.ok(
-                Response.builder()
-                        .timestamp(now())
-                        .data(of("employees", employeeService.create(employee)))
-                        .message("New Employee Registered")
-                        .status(CREATED)
-                        .statusCode(CREATED.value())
-                        .build()
-        );
+    @GetMapping("/getEmployee/{id}")
+    public Optional<Employee> getEmployeeById(@PathVariable("id") Long id){
+        employeeService.get(id);
+        return employeeRepository.findById(id);
 
+    }
+    @PostMapping("/register/{id}")
+    public ResponseEntity<Object> create(@RequestBody Employee employee, @PathVariable Long id){
+        employeeService.create(employee,id);
+        return ResponseEntity.ok("Successfully Registered");
     }
     @PutMapping("/update/{id}")
-    public ResponseEntity<Response> updateEmployee(@PathVariable("id") Long id,
+    public ResponseEntity<Object> updateEmployee(@PathVariable("id") Long id,
                                                    @RequestParam (required = false ) String lastName,
                                                    @RequestParam (required = false ) String firstName,
                                                    @RequestParam (required = false ) String email,
                                                    @RequestParam (required = false ) LocalDate dateOfBirth
     ){
-        return ResponseEntity.ok(
-                Response.builder()
-                        .timestamp(now())
-                        .data(of("employees", employeeService.update(id,lastName,firstName,email,dateOfBirth)))
-                        .message("Successfuly Updated")
-                        .status(OK)
-                        .statusCode(OK.value())
-                        .build()
-        );
+        employeeService.update(id,lastName,firstName,email,dateOfBirth);
+        return ResponseEntity.ok("Successfully Update");
 
     }
     @DeleteMapping("/archive/{id}")
-    public ResponseEntity<Response> archiveEmployee(@PathVariable("id") Long id){
-        return ResponseEntity.ok(
-                Response.builder()
-                        .timestamp(now())
-                        .data(of("employees", employeeService.archive(id)))
-                        .message("Succesfuly Deleted")
-                        .status(OK)
-                        .statusCode(OK.value())
-                        .build()
-        );
+    public ResponseEntity<Object> archiveEmployee(@PathVariable("id") Long id){
+        employeeService.archive(id);
+        return ResponseEntity.ok("Employee Archived");
 
     }
 

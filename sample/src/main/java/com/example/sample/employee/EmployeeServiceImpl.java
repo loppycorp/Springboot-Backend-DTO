@@ -6,15 +6,12 @@ import com.example.sample.job.JobRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
-
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 @RequiredArgsConstructor
 @Service
@@ -26,16 +23,18 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final JobRepository jobRepository;
 
     @Override
-    public Employee create(Employee employee) {
+    public Employee create(Employee employee, Long jobId) {
         log.info("Register new employee: " + employee.getLastName() + "," + employee.getFirstName());
         employee.setStatus(Status.ACTIVE);
-        Job job = new Job();
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new IllegalStateException(jobId + "doesn't exist"));
         employee.setJob(job);
         Optional<Employee> verifyEmail = employeeRepository
                 .findEmployeeByEmail(employee.getEmail());
         if (verifyEmail.isPresent()) {
             throw new IllegalStateException(employee.getEmail() + "is already taken");
         }
+
             return employeeRepository.save(employee);
 
     }

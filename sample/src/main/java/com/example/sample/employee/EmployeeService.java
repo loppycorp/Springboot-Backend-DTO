@@ -7,7 +7,7 @@ import java.util.Collection;
 
 @Service
 public interface EmployeeService {
-    Employee create(Employee employee);
+    Employee create(Employee employee, Long jobId);
     Collection <Employee> list(int limit);
     Employee get(Long id);
     Employee archive(Long id);

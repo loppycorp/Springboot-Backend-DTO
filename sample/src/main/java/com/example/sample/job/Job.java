@@ -1,40 +1,43 @@
 package com.example.sample.job;
 
 import com.example.sample.employee.Employee;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
 
 @Entity
-@Table (name = "Job")
+@Transactional
+@Data
 @NoArgsConstructor
+@Table(name = "job")
 public class Job {
     @Id
-    @GeneratedValue (strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "job_id")
+    private Long jobId;
     private String position;
     private String department;
-    @OneToOne(mappedBy = "job")
-    private Employee employee;
 
-    public Job(Long id, String position, String department) {
-        this.id = id;
+
+    public Job(Long jobId, String position, String department) {
+        this.jobId = jobId;
         this.position = position;
         this.department = department;
     }
 
-    public Job(String position, String department, Employee employee) {
+    public Job(String position, String department) {
         this.position = position;
         this.department = department;
-        this.employee = employee;
     }
 
-    public Long id() {
-        return id;
+    public Long Jobid() {
+        return jobId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setJobId(Long jobId) {
+        this.jobId = jobId;
     }
 
     public String getPosition() {
@@ -53,12 +56,4 @@ public class Job {
         this.department = department;
     }
 
-    @Override
-    public String toString() {
-        return "Job{" +
-                "id=" + id +
-                ", position='" + position + '\'' +
-                ", department='" + department + '\'' +
-                '}';
-    }
 }

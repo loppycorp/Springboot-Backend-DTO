@@ -61,9 +61,7 @@ public class JobServiceImpl implements JobService {
     @Override
     public Job archive(Long id) {
         log.info("Employee Archived");
-        Job getId = jobRepository.findById(id)
-                .orElseThrow(() -> new IllegalStateException(
-                        id + "doesn't exist"));
-        return getId;
+        jobRepository.deleteById(id);
+        return null;
     }
 }
