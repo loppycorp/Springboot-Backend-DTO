@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @RequiredArgsConstructor
 @Service
@@ -28,15 +27,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final DepartmentRepository departmentRepository;
 
     @Override
-    public Employee create(Employee employee, Long empId, Long prjId) {
+    public Employee create(Employee employee, Long deptId) {
         log.info("Register new employee: " + employee.getLastName() + "," + employee.getFirstName());
-        Department department = departmentRepository.findById(empId).get();
-        Projects projects = projectsRepository.findById(prjId).get();
+        Department department = departmentRepository.findById(deptId).get();
         employee.setCreateDate(Timestamp.valueOf(LocalDateTime.now()));
         employee.setModifiedDate(Timestamp.valueOf(LocalDateTime.now()));
         employee.setStatus(Status.ACTIVE);
         employee.setDepartment(department);
-        employee.setProjects((List<Projects>) projects);
             return employeeRepository.save(employee);
 
     }

@@ -35,9 +35,8 @@ public class EmployeeController {
     @PostMapping("/register/department-id/{empId}/project-id/{prjId}")
     public ResponseEntity<Object> create(
             @RequestBody Employee employee,
-            @PathVariable("empId") Long empId,
-            @PathVariable("prjId") Long prjId){
-        return ResponseEntity.ok(employeeService.create(employee,empId, prjId));
+            @PathVariable("empId") Long empId){
+        return ResponseEntity.ok(employeeService.create(employee,empId));
     }
 
     @PutMapping("/update/{id}")
