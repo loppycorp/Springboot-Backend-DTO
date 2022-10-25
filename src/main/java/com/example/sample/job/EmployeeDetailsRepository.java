@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface JobRepository extends JpaRepository<Job, Long> {
+public interface EmployeeDetailsRepository extends JpaRepository<EmployeeDetails, Long> {
 
-    @Query("SELECT e FROM Employee e WHERE e.empId = ?1")
-    Optional<Job> findJobById (long id);
+    @Query("SELECT e FROM Employee e WHERE e.id = ?1")
+    Optional<EmployeeDetails> findJobById (long id);
 }

@@ -7,14 +7,13 @@ import java.util.Collection;
 
 @Service
 public interface EmployeeService {
-    Employee create(Employee employee, Long jobId);
+    Employee create(Employee employee, Long empId, Long prjId);
     Collection <Employee> list(int limit);
     Employee get(Long id);
     Employee archive(Long id);
+
     Employee update(Long id,
                     String lastName,
-                    String firstName,
-                    String email,
-                    LocalDate dateOfBirth);
+                    String firstName);
 
 }

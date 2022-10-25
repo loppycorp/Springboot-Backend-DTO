@@ -32,19 +32,20 @@ public class EmployeeController {
         return employeeRepository.findById(id);
 
     }
-    @PostMapping("/register/{id}")
-    public ResponseEntity<Object> create(@RequestBody Employee employee, @PathVariable Long id){
-        employeeService.create(employee,id);
-        return ResponseEntity.ok("Successfully Registered");
+    @PostMapping("/register/department-id/{empId}/project-id/{prjId}")
+    public ResponseEntity<Object> create(
+            @RequestBody Employee employee,
+            @PathVariable("empId") Long empId,
+            @PathVariable("prjId") Long prjId){
+        return ResponseEntity.ok(employeeService.create(employee,empId, prjId));
     }
+
     @PutMapping("/update/{id}")
     public ResponseEntity<Object> updateEmployee(@PathVariable("id") Long id,
                                                    @RequestParam (required = false ) String lastName,
-                                                   @RequestParam (required = false ) String firstName,
-                                                   @RequestParam (required = false ) String email,
-                                                   @RequestParam (required = false ) LocalDate dateOfBirth
+                                                   @RequestParam (required = false ) String firstName
     ){
-        employeeService.update(id,lastName,firstName,email,dateOfBirth);
+        employeeService.update(id,lastName,firstName);
         return ResponseEntity.ok("Successfully Update");
 
     }

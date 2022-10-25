@@ -1,17 +1,21 @@
 package com.example.sample.employee;
 
 import com.example.sample.constants.Status;
-import com.example.sample.job.Job;
-import com.example.sample.job.JobRepository;
+import com.example.sample.department.Department;
+import com.example.sample.department.DepartmentRepository;
+import com.example.sample.project.Projects;
+import com.example.sample.project.ProjectsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
-import java.time.LocalDate;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Service
@@ -20,21 +24,19 @@ import java.util.Optional;
 public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
-    private final JobRepository jobRepository;
+    private final ProjectsRepository projectsRepository;
+    private final DepartmentRepository departmentRepository;
 
     @Override
-    public Employee create(Employee employee, Long jobId) {
+    public Employee create(Employee employee, Long empId, Long prjId) {
         log.info("Register new employee: " + employee.getLastName() + "," + employee.getFirstName());
+        Department department = departmentRepository.findById(empId).get();
+        Projects projects = projectsRepository.findById(prjId).get();
+        employee.setCreateDate(Timestamp.valueOf(LocalDateTime.now()));
+        employee.setModifiedDate(Timestamp.valueOf(LocalDateTime.now()));
         employee.setStatus(Status.ACTIVE);
-        Job job = jobRepository.findById(jobId)
-                .orElseThrow(() -> new IllegalStateException(jobId + "doesn't exist"));
-        employee.setJob(job);
-        Optional<Employee> verifyEmail = employeeRepository
-                .findEmployeeByEmail(employee.getEmail());
-        if (verifyEmail.isPresent()) {
-            throw new IllegalStateException(employee.getEmail() + "is already taken");
-        }
-
+        employee.setDepartment(department);
+        employee.setProjects((List<Projects>) projects);
             return employeeRepository.save(employee);
 
     }
@@ -54,9 +56,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Employee update(Long id,
                            String lastName,
-                           String firstName,
-                           String email,
-                           LocalDate dateOfBirth) {
+                           String firstName) {
         log.info("EmployeeId: " + id + "updated");
         Employee getId = employeeRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException(
@@ -67,12 +67,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         if (firstName != null && firstName.length() > 0 && !Objects.equals(getId.getFirstName(), firstName)) {
             getId.setFirstName(firstName);
-        }
-        if (email != null && email.length() > 0 && !Objects.equals(getId.getEmail(), email)) {
-            getId.setEmail(email);
-        }
-        if (dateOfBirth != null && !Objects.equals(getId.getDateOfBirth(), dateOfBirth)) {
-            getId.setDateOfBirth(dateOfBirth);
         }
 
         return getId;
@@ -87,4 +81,5 @@ public class EmployeeServiceImpl implements EmployeeService {
         getId.setStatus(Status.DELETED);
         return getId;
     }
+
 }
